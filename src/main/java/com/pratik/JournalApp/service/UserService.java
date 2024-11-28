@@ -1,9 +1,7 @@
 package com.pratik.JournalApp.service;
 
 
-import com.pratik.JournalApp.entity.JournalEntry;
 import com.pratik.JournalApp.entity.User;
-import com.pratik.JournalApp.repository.JournalEntryRepository;
 import com.pratik.JournalApp.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +19,19 @@ public class UserService {
    @Autowired
    private UserRepository userRepository;
 
-   private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+   private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-   public void saveEntry(User user){
+   public void saveNewUser(User user){
+
+      if(user.getUserName() == null){
+         throw new IllegalArgumentException("Username cannot be null");
+      }
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user.setRoles(Arrays.asList("USER"));
       userRepository.save(user);
    }
 
-   public void saveNewUser(User user){
+   public void saveUser(User user){
       userRepository.save(user);
    }
 
