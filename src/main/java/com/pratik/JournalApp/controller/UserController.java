@@ -1,8 +1,10 @@
 package com.pratik.JournalApp.controller;
 
+import com.pratik.JournalApp.api.response.WeatherResponse;
 import com.pratik.JournalApp.entity.User;
 import com.pratik.JournalApp.repository.UserRepository;
 import com.pratik.JournalApp.service.UserService;
+import com.pratik.JournalApp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,13 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private WeatherService weatherService;
 
-    @GetMapping
-    public List<User> getAllUsers(){
-       return userService.getAll();
-    }
+//    @GetMapping
+//    public List<User> getAllUsers(){
+//       return userService.getAll();
+//    }
 
 
 
@@ -50,6 +54,21 @@ public class UserController {
         userRepository.deleteByUserName(authentication.getName());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<?> greetings(){
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+
+        WeatherResponse weatherResponse = weatherService.getWeather("Pune");
+
+        String greetngs = "";
+
+        if(weatherResponse != null){
+            greetngs = ", Weather feels like "+ weatherResponse.getCurrent().getFeelslike();
+        }
+        return new ResponseEntity<>("Hi "+authentication.getName()+ greetngs ,HttpStatus.OK);
     }
 
 
